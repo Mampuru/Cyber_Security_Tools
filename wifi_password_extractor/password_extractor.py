@@ -22,3 +22,20 @@ for i in data:
 
 print("{:<30} | {:<}".format("Wi-Fi name","Password"))
 print("------------------------------------")
+
+for i in profile:
+    try:
+        result = subprocess.check_output(['netsh','wlan','show','profiles',i,'key = clear'])
+
+        result = result.decode('utf-8',errors = "backslashreplace")
+        result = result.split('\n')
+
+        result = [b.split(":")[1][1:-1] for b in result if "Key Content" in b]
+
+        try:
+            print("{:<30} | {:<}".format(i,result[0]))
+        except IndexError:
+            print("{:<30} | {:<}".format(i,""))
+    
+    except subprocess.CalledProcessError:
+        print("Encodeing Error occured")
