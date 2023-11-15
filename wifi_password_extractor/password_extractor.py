@@ -23,19 +23,22 @@ for i in data:
 print("{:<30} | {:<}".format("Wi-Fi name","Password"))
 print("------------------------------------")
 
-for i in profile:
-    try:
-        result = subprocess.check_output(['netsh','wlan','show','profiles',i,'key = clear'])
-
-        result = result.decode('utf-8',errors = "backslashreplace")
-        result = result.split('\n')
-
-        result = [b.split(":")[1][1:-1] for b in result if "Key Content" in b]
-
-        try:
-            print("{:<30} | {:<}".format(i,result[0]))
-        except IndexError:
-            print("{:<30} | {:<}".format(i,""))
+try:
+    profile_names = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles']).decode('utf-8').split('\n')
+    profile_names = [line.split(":")[1][1:-1] for line in profile_names if "All User Profile" in line]
     
-    except subprocess.CalledProcessError:
-        print("Encodeing Error occured")
+    for i in profile_names:
+        try:
+            # Getting meta data with password using wifi name
+            results = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', i, 'key=clear']).decode('utf-8').split('\n')
+            password = [b.split(":")[1][1:-1] for b in results if "Key Content" in b]
+            
+            try:
+                print("{:<30} | {:<}".format(i, password[0]))
+            except IndexError:
+                print("{:<30} | {:<}".format(i, ""))
+        
+        except subprocess.CalledProcessError:
+            print("Encoding Error occurred")
+except subprocess.CalledProcessError:
+    print("Error occurred while fetching profiles")
