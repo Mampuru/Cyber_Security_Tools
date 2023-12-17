@@ -31,3 +31,16 @@ def decrypt_file(encrypted_file_path, key):
         decrypted_file.write(decrypted_data)
 
     return decrypted_file_pat
+
+# Function to test the encrypt and decrpyt functions
+if __name__ == "__main__":
+    key = generate_key()
+
+    # Encrypt a file
+    file_to_encrypt = 'file_to_encrypt.txt'
+    encrypted_file = encrypt_file(file_to_encrypt, key)
+    print(f"File encrypted: {encrypted_file}")
+
+    # Decrypt the encrypted file
+    decrypted_file = decrypt_file(encrypted_file, key)
+    print(f"File decrypted: {decrypted_file}")
