@@ -34,3 +34,16 @@ def decrypt_image(encrypted_image_path, key):
     decrypted_image.save(decrypted_image_path)
 
     return decrypted_image_path
+
+# Example usage:
+if __name__ == "__main__":
+    key = generate_key()
+
+    # Encrypt an image
+    image_to_encrypt = 'image_to_encrypt.jpg'  # Replace with your image path
+    encrypted_image = encrypt_image(image_to_encrypt, key)
+    print(f"Image encrypted: {encrypted_image}")
+
+    # Decrypt the encrypted image
+    decrypted_image = decrypt_image(encrypted_image, key)
+    print(f"Image decrypted: {decrypted_image}")
