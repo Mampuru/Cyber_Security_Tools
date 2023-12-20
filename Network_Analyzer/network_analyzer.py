@@ -8,3 +8,9 @@ def packet_callback(packet):
         protocol = packet['IP'].proto
 
         print(f"Source IP: {src_ip}, Destination IP: {dst_ip}, Protocol: {protocol}")
+
+
+# Sniff network packets
+def start_sniffing(interface='eth0', count=10):
+    print(f"Sniffing {count} packets on interface {interface}...")
+    sniff(iface=interface, prn=packet_callback, count=count)
