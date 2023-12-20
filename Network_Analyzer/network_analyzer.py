@@ -14,3 +14,8 @@ def packet_callback(packet):
 def start_sniffing(interface='eth0', count=10):
     print(f"Sniffing {count} packets on interface {interface}...")
     sniff(iface=interface, prn=packet_callback, count=count)
+
+
+# Example usage
+if __name__ == "__main__":
+    start_sniffing()
